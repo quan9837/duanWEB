@@ -1,0 +1,113 @@
+﻿@model WebApp.Areas.Admin.Models.SanPham
+@{
+    var rand = ViewData["rand"];
+}
+<div class="row" id="product-container">
+    @foreach (SanPham item in ViewBag.Product)
+    {
+        <div class="col-xs-12 col-sm-6 col-md-4 col-lg-3 product-item">
+            <div class="item-product">
+                <div class="thumb">
+                    <a href="#"><img src="~/img/pro/@item.Hinh?@rand" alt=""></a>
+                    <span class="sale">Giảm <br>15%</span>
+                    <div class="action">
+                        <a asp-route="addcart" asp-route-productid="@item.Ma" style="width:100%;height:100%">Thêm vào giỏ hàng</a>
+                        <div class="clear"></div>
+                    </div>
+                </div>
+                <div class="info-product">
+                    <h4><a href="#">@item.TenSP</a></h4>
+                    <div class="price">
+                        <span class="price-current">@item.Gia VNĐ</span>
+                    </div>
+                    <a asp-controller="" asp-action="_productdetail" asp-route-id="@item.Ma" class="view-more">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Phân trang -->
+<div id="pagination" class="text-center row" style="margin: 20px 0; white-space: nowrap;"></div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Giỏ hàng của bạn</h4>
+            </div>
+            <div class="modal-body">
+                <p>Some text in the modal.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Script phân trang -->
+<script>
+    const itemsPerPage = 8;
+    const items = document.querySelectorAll('.product-item');
+    const totalItems = items.length;
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    const pagination = document.getElementById('pagination');
+    let currentPage = 1;
+
+    function showPage(page) {
+        items.forEach(item => item.style.display = "none");
+        const start = (page - 1) * itemsPerPage;
+        const end = start + itemsPerPage;
+        for (let i = start; i < end && i < totalItems; i++) {
+            items[i].style.display = "block";
+        }
+        currentPage = page;
+        renderPagination();
+    }
+
+    function renderPagination() {
+        pagination.innerHTML = "";
+
+        // Nút «
+        const prev = document.createElement("button");
+        prev.innerText = "«";
+        prev.className = "btn btn-light mx-1";
+        prev.disabled = currentPage === 1;
+        prev.onclick = () => showPage(currentPage - 1);
+        pagination.appendChild(prev);
+
+        // Hiển thị max 5 số trang gần currentPage
+        let startPage = Math.max(1, currentPage - 2);
+        let endPage = Math.min(totalPages, startPage + 4);
+        if (endPage - startPage < 4) {
+            startPage = Math.max(1, endPage - 4);
+        }
+
+        for (let i = startPage; i <= endPage; i++) {
+            const btn = document.createElement("button");
+            btn.innerText = i;
+            btn.className = "btn btn-primary mx-1 page-link";
+            if (i === currentPage) {
+                btn.classList.add("active");
+            }
+            btn.onclick = () => showPage(i);
+            pagination.appendChild(btn);
+        }
+
+        // Nút »
+        const next = document.createElement("button");
+        next.innerText = "»";
+        next.className = "btn btn-light mx-1";
+        next.disabled = currentPage === totalPages;
+        next.onclick = () => showPage(currentPage + 1);
+        pagination.appendChild(next);
+    }
+
+    // Khởi động
+    if (totalItems > 0) {
+        showPage(1);
+    }
+</script>

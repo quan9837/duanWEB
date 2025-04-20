@@ -1,0 +1,104 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model ChitietDonHang
+
+@{
+    ViewData["Title"] = "pages Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!--banner-->
+
+<div class="container">
+    <h3><a asp-area="" asp-controller="Home" asp-action="Index">Home</a> / <span>Checkout</span></h3>
+</div>
+</div>
+<div class="content">
+    <div class="cart-items">
+        <div class="container">
+            <h2>Đơn Hàng Của Tôi</h2>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Hình Ảnh</th>
+                        <th>Tên SP</th>
+                        <th>Số Lượng</th>
+                        <th>Giá Bán</th>
+                        <th>Tổng cộng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int dem = 0;
+                        decimal tongtien = 0;
+                        decimal tongcong = 0;
+                        int MaSP = 0;
+                        int size = ViewBag.size;
+                        int i = 0;
+                        string sl = "";
+                        string gia = "";
+
+                    }
+                    @foreach (var item in ViewBag.cart)
+                    {
+                        
+                        i++;
+                        tongcong = @item.product.Gia * @item.quantity;
+                        tongtien += tongcong;
+
+                        if (i == size)
+                        {
+                            sl += @item.quantity;
+                            MaSP += @item.product.Ma;
+                            gia += @item.product.Gia;
+
+                        }
+                        else
+                        {
+                            MaSP += @item.product.Ma;
+                            sl += @item.quantity + "/";
+                            gia += @item.product.Gia;
+
+                        }
+
+                        <tr>
+                            <td>
+                                <img src="~/img/pro/@item.product.Hinh" class="img-thumbnail" style="width:10%" alt="">
+                            </td>
+                            <td>
+                                <h3><a href="#">@item.product.TenSP </a></h3>
+                            </td>
+                            <td>
+                                @item.quantity
+                            </td>
+                            <td>
+                                @item.product.Gia.ToString("n0") VND
+                            </td>
+                            <td>
+                                @tongcong.ToString("n0") VND
+                            </td>
+                        </tr>
+
+
+
+                    }
+                    <tr>
+                        <td colspan="5">
+                            <h4><b>Tổng tiền :  @tongtien.ToString("n0") VND</b></h4>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <form asp-action ="CheckOut">
+                <div class="form-group">
+                    <input type="submit" value="Gửi đơn hàng đi" class="btn btn-primary" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
